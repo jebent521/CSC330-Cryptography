@@ -40,39 +40,41 @@ class EllipticCurve:
             [points.append((x, i)) for i in y_squares.get(x_out, [])]
         return points
     
-    def invert(self, p):
-        if p == "O": return "O"
-        return (p[0], self.p - p[1])
+    def invert(self, P):
+        if P == "O": return "O"
+        return (P[0], self.p - P[1])
 
-    def add(self, p, q):
+    def add(self, P, Q):
         # case 1: point at infinity
-        if p == "O": return q
-        if q == "O": return p
+        if P == "O": return Q
+        if Q == "O": return P
         # case 2: points are mutual inverses
-        if p == self.invert(q):
+        if P == self.invert(Q):
             return "O"
         # case 3: distinct points
-        if p != q:
-            s = ((q[1] - p[1]) * pow(q[0] - p[0], self.p - 2)) % self.p
+        Px, Py = P
+        Qx, Qy = Q
+        if P != Q:
+            s = ((Qy - Py) * pow(Qx - Px, self.p - 2)) % self.p
         # case 4: p == q
         else:
-            s = ((3 * pow(p[0], 2) + self.a) * pow(2 * p[1], self.p - 2)) % self.p
+            s = ((3 * pow(Px, 2) + self.a) * pow(2 * Py, self.p - 2)) % self.p
 
-        rx = (pow(s, 2) - p[0] - q[0]) % self.p
-        ry = (s * (p[0] - rx) - p[1]) % self.p
-        return (rx, ry)
+        Rx = (pow(s, 2) - Px - Qx) % self.p
+        Ry = (s * (Px - Rx) - Py) % self.p
+        return (Rx, Ry)
     
 c = EllipticCurve(3, 4, 7)
 print("1. Given the elliptic curve", c)
-print(" a. Its discriminant is", c.discriminant)
-print(" b. (5, 2) is ", "" if c.testPoint(5, 2) else "not ", "on the curve", sep="")
-print(" c. (4, 3) is ", "" if c.testPoint(4, 3) else "not ", "on the curve", sep="")
-print(" d. The points on the curve are", c.findAllPoints())
+print("  a. Its discriminant is", c.discriminant)
+print("  b. (5, 2) is ", "" if c.testPoint(5, 2) else "not ", "on the curve", sep="")
+print("  c. (4, 3) is ", "" if c.testPoint(4, 3) else "not ", "on the curve", sep="")
+print("  d. The points on the curve are", c.findAllPoints())
 print()
 c = EllipticCurve(3, 5, 47)
 p = (4, 9)
 q = (11, 10)
 print("2. P =", p, "and Q =", q, " are both points on the curve", c)
-print(" a. -P =", c.invert(p))
-print(" b. P + Q =", c.add(p, q))
-print(" c. 2P =", c.add(p, p))
+print("  a. -P =", c.invert(p))
+print("  b. P + Q =", c.add(p, q))
+print("  c. 2P =", c.add(p, p))
