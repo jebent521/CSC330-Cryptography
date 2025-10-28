@@ -1,0 +1,6 @@
+*.docx
+x64
+*.sln
+*.vcx*
+.vs
+*.pdf
